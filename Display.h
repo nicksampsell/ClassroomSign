@@ -1,3 +1,5 @@
+#ifndef DISPLAY_H
+#define DISPLAY_H
 #include "led-matrix.h"
 #include <string>
 #include <fstream>
@@ -22,3 +24,4 @@ class Display {
         uint8_t _colors[5][3];
         
 };
+#endif

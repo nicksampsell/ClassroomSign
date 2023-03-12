@@ -1,12 +1,13 @@
-#include "led-matrix.h"
-#include "Display.h"
-
 #include <unistd.h>
 #include <math.h>
 #include <stdio.h>
 #include <signal.h>
 #include <string>
 #include <ctime>
+
+#include "led-matrix.h"
+#include "ConfigMgr.h"
+#include "Display.h"
 
 using rgb_matrix::RGBMatrix;
 using rgb_matrix::Canvas;
@@ -31,6 +32,8 @@ int main(int argc, char **argv) {
     runtime.drop_privileges = 0;
     defaults.brightness = 60;
     Canvas *canvas = RGBMatrix::CreateFromFlags(&argc, &argv, &defaults, &runtime);
+    std::vector<std::vector<uint8_t>> colors;
+    std::map<std::string, std::vector<Special>> specials;
 
     if(canvas == NULL)
         return 1;
@@ -40,6 +43,10 @@ int main(int argc, char **argv) {
 
     while(!interrupt_received)
     {
+        ConfigMgr cfg;
+        colors = cfg.getColors("default");
+        specials = cfg.getSpecials();
+
         Display display(canvas);
         display.DisplayShortDate();
         display.DisplayLongDate();
@@ -50,40 +57,4 @@ int main(int argc, char **argv) {
 
     return 0;
 }
-
-/**
-int main(int argc, char **argv) {
-  RGBMatrix::Options options;
-  options.hardware_mapping = "regular";
-  options.rows = 64;
-  options.cols = 64;
-  options.chain_length = 2;
-  options.parallel = 1;
-  options.brightness = 60;
-  options.led_rgb_sequence = "rbg";
-  options.multiplexing = 0;
-  options.show_refresh_rate = true;
-  rgb_matrix::RuntimeOptions runtime_defaults;
-  runtime_defaults.drop_privileges = 0;
-
-  Canvas *canvas = RGBMatrix::CreateFromFlags(&argc, &argv, &options);
-  if(canvas == NULL)
-      return 1;
-
-  signal(SIGTERM, InterruptHandler);
-  signal(SIGINT, InterruptHandler);
-
-
-  time_t now = std::time(0);
-  std::tm* ltm = std::localtime(&now);
-  currentDate dd(ltm, "Hi");
-  dd.setItemPos(100, 30);
-
-  //  DrawOnCanvas(canvas);
-
-  canvas->Clear();
-  delete canvas;
-
-}**/
-
 
