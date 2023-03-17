@@ -47,9 +47,11 @@ int main(int argc, char **argv) {
         colors = cfg.getColors("default");
         specials = cfg.getSpecials();
 
+
         Display display(canvas);
         display.DisplayShortDate();
         display.DisplayLongDate();
+        display.DisplaySpecials(specials["a"][0]);
     }
     
     canvas->Clear();

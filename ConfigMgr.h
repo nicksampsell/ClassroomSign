@@ -22,6 +22,7 @@ struct Special {
     std::string Name;
     std::string Time;
     std::string Icon;
+    int Size;
 };
 
 struct ThemeCriteria {

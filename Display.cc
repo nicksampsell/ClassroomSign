@@ -1,5 +1,6 @@
 #include "led-matrix.h"
 #include "graphics.h"
+#include "ConfigMgr.h"
 
 #include "Display.h"
 #include <string>
@@ -10,6 +11,8 @@
 #include <locale>
 #include <ctime>
 #include <iterator>
+
+
 
 #include "include/nlohmann/json.hpp"
 using json = nlohmann::json;
@@ -36,7 +39,7 @@ Display::Display(Canvas *canvas)
                 _colors[i][j] = allColors[theme][i][j].get<uint8_t>();
             }
         }
-    } 
+    }
 }
 
 void Display::DisplayShortDate()
@@ -83,8 +86,7 @@ void Display::DisplayLongDate()
     time_t t = time({});
     char timeString[80];
     
-    //note: %e is space padded...for whatever reason.  %B%e is intentional.
-    strftime(timeString, sizeof(timeString), "%A, %B%e, %Y", std::localtime(&t));
+    strftime(timeString, sizeof(timeString), "%A, %B %e, %Y", std::localtime(&t));
 
     int dateFontWidth = dateFont.CharacterWidth((int)'M')*(strlen(timeString));
     int dateFontSmall = todayIsFont.CharacterWidth((int)'M')*(strlen(timeString));
@@ -137,7 +139,34 @@ void Display::DisplayLongDate()
 
 }
 
-void DisplaySpecials()
+void Display::DisplaySpecials(Special special)
 {
+    rgb_matrix::Font dayNameFont;
+    rgb_matrix::Font specialNameFont;
 
+    dayNameFont.LoadFont("./fonts/cherry-10-r.bdf");
+    specialNameFont.LoadFont("./fonts/6x12.bdf");
+
+    std::string dayName = "A Day";
+
+    Color dayNameColor(_colors[1][0], _colors[1][1], _colors[1][2]);
+    Color specialNameColor(_colors[4][0], _colors[4][1], _colors[4][2]);
+
+
+    rgb_matrix::DrawText(
+            _canvas,
+            dayNameFont,
+            (special.Size + 6),
+            ((_canvas->height() - (dayNameFont.height() + 4))  - ((specialNameFont.height() / 2) - 4)),
+            dayNameColor,
+            "A Day");
+
+    rgb_matrix::DrawText(
+            _canvas,
+            specialNameFont,
+            (special.Size + 8),
+            (_canvas->height() - (specialNameFont.height() / 2 - 1)),
+            specialNameColor,
+            special.Name.c_str()
+            );
 }

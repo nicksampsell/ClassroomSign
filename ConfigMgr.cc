@@ -32,11 +32,11 @@ std::map<std::string, std::vector<Special>> ConfigMgr::getSpecials()
 
         for(auto& el : it.value())
         {
-            std::cout << el << std::endl;
             Special s;
             s.Name = el["name"].get<std::string>();
             s.Icon = el["icon"].get<std::string>();
             s.Time = el["time"].get<std::string>();
+            s.Size = el["size"].get<int>();
             oneDay.push_back(s);
         
         }
